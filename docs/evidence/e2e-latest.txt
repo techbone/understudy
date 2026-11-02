@@ -1,0 +1,49 @@
+
+ RUN  v4.1.12 /Users/muhammadmusa/Workspace/Gigs/builderio/understudy
+
+stdout | tests/monday-run.pglite.spec.ts
+[db] Applying 1 migration(s) on Postgres...
+
+stdout | tests/monday-run.pglite.spec.ts
+[db] Applied migration "runbooks-and-trust-ledger" (v1) (16 statements)
+
+stdout | tests/monday-run.pglite.spec.ts > Monday invoice chase > moves the trust ladder up and down on evidence, and the gate holds
+  ✓ seeded runbook: 6 steps, levels auto/approve/auto/approve/auto/shadow, step 2 streak 2/3
+
+stdout | tests/monday-run.pglite.spec.ts > Monday invoice chase > moves the trust ladder up and down on evidence, and the gate holds
+  ✓ step 1 (Auto) ran unattended
+
+stdout | tests/monday-run.pglite.spec.ts > Monday invoice chase > moves the trust ladder up and down on evidence, and the gate holds
+  ✓ step 2 (Approve) waits for the person; step 3 refused with waiting_on_person
+
+stdout | tests/monday-run.pglite.spec.ts > Monday invoice chase > moves the trust ladder up and down on evidence, and the gate holds
+  ✓ gate: perform-step on an Approve step needs a human (needsApproval predicate = true)
+
+stdout | tests/monday-run.pglite.spec.ts > Monday invoice chase > moves the trust ladder up and down on evidence, and the gate holds
+  ✓ step 2 approved unchanged: streak 3/3, promotion offered (not applied)
+
+stdout | tests/monday-run.pglite.spec.ts > Monday invoice chase > moves the trust ladder up and down on evidence, and the gate holds
+  ✓ person accepted: step 2 promoted Approve → Auto
+
+stdout | tests/monday-run.pglite.spec.ts > Monday invoice chase > moves the trust ladder up and down on evidence, and the gate holds
+  ✓ step 3 (Auto) corrected after the fact: demoted Auto → Approve, streak reset
+
+stdout | tests/monday-run.pglite.spec.ts > Monday invoice chase > moves the trust ladder up and down on evidence, and the gate holds
+  ✓ step 4 (Send, capped) sent the person's edited version to the mock outbox; edit reset its streak
+
+stdout | tests/monday-run.pglite.spec.ts > Monday invoice chase > moves the trust ladder up and down on evidence, and the gate holds
+  ✓ step 6 (Shadow) done by the person with the agent's suggestion: streak 2/3; run done
+
+stdout | tests/monday-run.pglite.spec.ts > Monday invoice chase > moves the trust ladder up and down on evidence, and the gate holds
+  ✓ database CHECK refuses to put a high-risk step on Auto, even with raw SQL
+
+stdout | tests/monday-run.pglite.spec.ts > Monday invoice chase > moves the trust ladder up and down on evidence, and the gate holds
+  ✓ final ladder: auto/auto/approve/approve/auto/shadow
+
+ ✓ tests/monday-run.pglite.spec.ts > Monday invoice chase > moves the trust ladder up and down on evidence, and the gate holds 76ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  10:15:47
+   Duration  1.99s (transform 64ms, setup 0ms, import 1.18s, tests 746ms, environment 0ms)
+
