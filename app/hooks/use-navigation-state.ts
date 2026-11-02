@@ -18,13 +18,16 @@ export interface NavigationState {
   path?: string;
   publicPath?: string;
   threadId?: string;
+  runbookId?: string;
+  stepId?: string;
 }
 
 export function useNavigationState() {
   useAgentRouteState<NavigationState>({
     browserTabId: TAB_ID,
     requestSource: TAB_ID,
-    getNavigationState: ({ pathname }) => navigationStateForPath(pathname),
+    getNavigationState: ({ pathname, searchParams }) =>
+      navigationStateForPath(pathname, searchParams),
     getCommandPath: commandPathForNavigation,
   });
 }
@@ -62,17 +65,27 @@ function matchesPathPrefix(pathname: string, prefix: string): boolean {
   return pathname === prefix || pathname.startsWith(`${prefix}/`);
 }
 
-export function navigationStateForPath(pathname: string): NavigationState {
+export function navigationStateForPath(
+  pathname: string,
+  searchParams?: URLSearchParams,
+): NavigationState {
   const threadId = threadIdFromPath(pathname);
+  const runbookId = pathname.match(/^\/runbooks\/([^/]+)/)?.[1];
+  const stepId = searchParams?.get("step");
   return {
     view: viewForPath(pathname),
     path: pathname,
     publicPath: appPathFromLocalRoute(pathname),
     ...(threadId ? { threadId } : {}),
+    ...(runbookId ? { runbookId: decodeURIComponent(runbookId) } : {}),
+    ...(runbookId && stepId ? { stepId } : {}),
   };
 }
 
 function viewForPath(pathname: string): string {
+  if (/^\/runbooks\/[^/]+/.test(pathname)) return "runbook";
+  if (pathname.startsWith("/runbooks")) return "runbooks";
+  if (pathname.startsWith("/outbox")) return "outbox";
   if (isChatPathname(pathname)) return "chat";
   if (pathname === HOME_PATH) return "home";
   if (pathname.startsWith("/database")) return "database";
@@ -88,6 +101,11 @@ function viewForPath(pathname: string): string {
 
 function pathForView(view?: string): string {
   switch (view) {
+    case "runbooks":
+    case "runbook":
+      return "/runbooks";
+    case "outbox":
+      return "/outbox";
     case "chat":
     case "ask":
       return NEW_CHAT_PATH;

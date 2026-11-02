@@ -1,4 +1,5 @@
 @import "@fontsource-variable/inter";
+@import "@fontsource-variable/jetbrains-mono";
 
 @import "tailwindcss";
 @import "@agent-native/toolkit/styles.css";
@@ -26,6 +27,11 @@
   --input: 0 0% 90%;
   --ring: 0 0% 40%;
   --radius: 0.5rem;
+  /* Understudy: one accent for earned trust. */
+  --earned: 161 72% 27%;
+  --earned-soft: 152 45% 94%;
+  --earned-foreground: 0 0% 100%;
+  --caution: 32 90% 40%;
   --sidebar-background: 0 0% 97%;
   --sidebar-foreground: 0 0% 43%;
   --sidebar-primary: 0 0% 15%;
@@ -229,6 +235,10 @@
 }
 
 .dark {
+  --earned: 158 58% 50%;
+  --earned-soft: 160 30% 13%;
+  --earned-foreground: 160 40% 6%;
+  --caution: 36 90% 60%;
   --background: 0 0% 13%;
   --foreground: 0 0% 90%;
   --card: 0 0% 16.47%;
@@ -280,4 +290,17 @@
 }
 ::-webkit-scrollbar-thumb:hover {
   background: hsl(var(--muted-foreground) / 0.34);
+}
+
+@theme inline {
+  --color-earned: hsl(var(--earned));
+  --color-earned-soft: hsl(var(--earned-soft));
+  --color-earned-foreground: hsl(var(--earned-foreground));
+  --color-caution: hsl(var(--caution));
+  --font-mono:
+    "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.tnum {
+  font-variant-numeric: tabular-nums;
 }

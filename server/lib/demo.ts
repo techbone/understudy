@@ -203,29 +203,70 @@ const INVOICES = [
   ["INV-1040", "Fable & Co", "Jo Mercer", "jo@fableco.test", 330000, -21, 1],
 ] as const;
 
-function pastProposal(effect: SeedStep["effect"], weeksAgo: number) {
-  if (effect === "send_emails") {
-    return {
-      emails: [
-        {
-          invoiceId: "historical",
-          to: "omar@brightline.test",
-          subject: "Invoice reminder",
-          body: `Reminder sent ${weeksAgo} week(s) ago.`,
-        },
-      ],
-    };
+function pastProposal(key: string, weeksAgo: number) {
+  const n = 1030 + weeksAgo;
+  switch (key) {
+    case "pull":
+      return {
+        summary: `${weeksAgo + 2} open invoices past due.`,
+        items: [
+          {
+            label: `INV-${n}`,
+            detail: `${10 + weeksAgo * 6} days overdue, $${(2.4 + weeksAgo / 2).toFixed(2)}k`,
+          },
+          {
+            label: "INV-1029",
+            detail: `${52 - weeksAgo * 7} days overdue, $7.40k`,
+          },
+        ],
+      };
+    case "exceptions":
+      return {
+        summary: "Skip Acme while their AP contact is away. Keep Fable warm.",
+        items: [
+          { label: "Acme Logistics", detail: "Skip: AP contact on leave." },
+          {
+            label: "Fable & Co",
+            detail: "Key account: warm tone, no late-fee language.",
+          },
+        ],
+      };
+    case "draft":
+      return {
+        summary: "2 reminders drafted.",
+        items: [
+          {
+            label: `INV-${n}`,
+            detail: "Friendly nudge with the invoice number and amount.",
+          },
+          { label: "INV-1040", detail: "Warm check-in, no late-fee language." },
+        ],
+      };
+    case "send":
+      return {
+        emails: [
+          {
+            invoiceId: `INV-${n}`,
+            to: "omar@brightline.test",
+            subject: `A quick nudge on INV-${n}`,
+            body: "Hi Omar, a friendly reminder that this invoice is now past due. Could you let me know when to expect payment?",
+          },
+        ],
+      };
+    case "log":
+      return {
+        entries: [
+          { invoiceId: `INV-${n}`, note: "Reminded." },
+          { invoiceId: "INV-1041", note: "Skipped: AP on leave." },
+        ],
+      };
+    default:
+      return {
+        to: FOUNDER_EMAIL,
+        subject: "Dunmore & Sons: 45+ days overdue",
+        body: "INV-1029, $7,400.00, 3 reminders sent. Hal Dunmore, hal@dunmore.test.",
+      };
   }
-  if (effect === "log")
-    return { entries: [{ invoiceId: "historical", note: "Reminded." }] };
-  if (effect === "escalate") {
-    return {
-      to: FOUNDER_EMAIL,
-      subject: "45+ days overdue",
-      body: "Dunmore & Sons: INV-1029.",
-    };
-  }
-  return { summary: `Run ${weeksAgo} week(s) ago.`, items: [] };
 }
 
 export async function resetDemo(scope: Scope) {
@@ -326,7 +367,7 @@ export async function resetDemo(scope: Scope) {
             : status === "human_done"
               ? "shadow"
               : "approve";
-        const proposal = JSON.stringify(pastProposal(step.effect, weeksAgo));
+        const proposal = JSON.stringify(pastProposal(step.key, weeksAgo));
         await tx.insert(schema.stepRuns).values({
           id: stepRunId,
           runId: pastRun.id,

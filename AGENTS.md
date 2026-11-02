@@ -31,3 +31,21 @@ Use `adding-a-feature` for functional parity and `frontend-design` for a user-fa
 Before building common workspace or agent UI, read `agent-native-toolkit`; for supported customization, read `customizing-agent-native`.
 
 - Guarded verification: run `pnpm agent-native:doctor`; fix findings before done.
+
+## Understudy
+
+Recorded chores (runbooks) the agent runs with the person. Each step has an earned trust level: `shadow` (agent suggests, person does it), `approve` (agent proposes, person signs off), `auto` (runs and is logged). `/runbooks/:runbookId` shows the ladder and this week's run; `?step=<id>` opens a step's evidence. `/outbox` is the mock inbox; nothing is really emailed.
+
+- Steps run in order. `submit-step` applies the level server-side; on `waiting_on_person` stop and point the person to the run view.
+- Promotion is never automatic: 3 clean approvals in a row offers it, the person accepts in the UI. Edit resets the streak; reject or correct drops a rung. `risk = high` steps are capped at `approve` (also a DB CHECK).
+- `decide-step`, `respond-promotion`, `reset-demo` are `uiOnly`: the agent cannot approve itself. `perform-step` is gated by `needsApproval` reading the same level.
+- `navigation` adds `runbookId` and `stepId` on runbook pages.
+
+| Action | Purpose |
+|---|---|
+| list-runbooks / get-runbook | Runbooks, steps, levels, latest run |
+| start-run | Start or resume a run |
+| submit-step | Hand over one step's output |
+| perform-step | Run a pending proposal now (gated) |
+| explain-step | Why a step is at its level, with evidence |
+| list-invoices / list-client-notes / list-outbox | Demo ledger, exceptions, sent mail |
