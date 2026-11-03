@@ -14,7 +14,8 @@
     "script": "agent-native script",
     "test": "vitest --run --passWithNoTests",
     "agent-native:doctor": "agent-native doctor",
-    "e2e": "vitest --run tests/monday-run.pglite.spec.ts --reporter=verbose 2>&1 | tee docs/evidence/e2e-latest.txt"
+    "e2e": "vitest --run tests/monday-run.pglite.spec.ts --reporter=verbose 2>&1 | tee docs/evidence/e2e-latest.txt",
+    "build:vercel": "AGENT_NATIVE_VERCEL_CRON_SCHEDULE=\"0 9 * * *\" NITRO_PRESET=vercel agent-native build && node scripts/vercel-function-config.mjs"
   },
   "dependencies": {
     "@agent-native/agentkit": "^0.222.2",
