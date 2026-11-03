@@ -21,6 +21,11 @@ export default defineAction({
 - shadow: saved as a suggestion; the person does the step themselves.
 Steps go in order: a step waits until every earlier step is resolved (errorCode waiting_on_person). When that happens, stop and tell the person which step needs them. Never ask them to approve in chat instead.
 output shape by step effect: note → {summary, items:[{label, detail}]}; send_emails → {emails:[{invoiceId, to, subject, body}]}; log → {entries:[{invoiceId, note}]}; escalate → {to, subject, body}.`,
+  // Safe to retry: the output is validated before anything is written, the
+  // write is one transaction, and a second submit of the same step is refused
+  // (already_submitted). Without this the agent loop stops the run after any
+  // failed call and the person has to type "continue".
+  retrySafe: true,
   schema: z.object({
     runId: z.string().describe("Run id from start-run"),
     stepId: z.string().describe("Step id from start-run"),

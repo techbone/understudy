@@ -30,3 +30,15 @@ Surprises from the framework and our code: the dead end, the path we chose, and 
 - **Cause:** found by running the production build locally with `VERCEL=1` against the same Supabase database and logging every DB error and timeout. On serverless the framework caps its Postgres pool at **1** connection. A startup query holds that one connection while other queries queue behind it (`SELECT name FROM _org_migrations_named` timed out), so each one hits the 8 s timeout. The framework then ends the pool, and every later query fails with `write CONNECTION_ENDED`. It isn't Vercel or Supabase: it fails the same way on a laptop.
 - **Path:** `pnpm build:vercel` runs `scripts/vercel-function-config.mjs` after the build. It raises the serverless pool to 5, which is safe behind the transaction pooler (port 6543), pins the function to `dub1` next to the database, and sets `maxDuration` to 60 s. The script throws if the framework code it patches moves, so a framework upgrade can't silently undo the fix.
 - **Guard:** the same local repro went from a 500 after 10.7 s to a correct "email or password is incorrect" in 1.2 s. Signing up on the live site is the end-to-end check.
+
+## 2026-11-03 — A failed submit stopped the whole run
+
+- **Dead end:** the live agent sent the escalation step without a subject. `submit-step` rejected it, and the framework then refused to retry ("an earlier attempt may have already saved changes") because it can't tell a rejected write from one that landed. The person had to type "continue".
+- **Path:** `submit-step` now declares `retrySafe: true`. That is true here: the output is validated before anything is written, the write is one transaction, and a second submit of the same step is refused. The validation error also names the failing field, so the model fixes the right thing.
+- **Guard:** the e2e run still passes. Re-run the escalation step on the live site and confirm a bad first call recovers without a stop.
+
+## 2026-11-03 — The shared demo runs on one funded model key
+
+- **Dead end:** looking for a spend limit in the framework. It records cost per user and can raise alerts, but nothing refuses a run, and the turn-start hook swallows errors, so it can't block either.
+- **Path:** `start-run` refuses to start a new run once an account's recorded model spend reaches $5 (about 30 runs at $0.17). A run already in progress can always finish. Free-form chat is not capped; the usage alert and the Meta credit balance are the backstop there.
+- **Guard:** `server/lib/usage-cap.spec.ts`.

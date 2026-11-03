@@ -12,11 +12,11 @@ const fn = ".vercel/output/functions/__server.func";
 
 const configPath = `${fn}/.vc-config.json`;
 const config = JSON.parse(readFileSync(configPath, "utf8"));
-config.regions = [process.env.VERCEL_FUNCTION_REGION || "dub1"];
+config.regions = ["dub1"];
 config.maxDuration = 60;
 writeFileSync(configPath, JSON.stringify(config, null, 2) + "\n");
 
-const poolMax = Number(process.env.SERVERLESS_DB_POOL_MAX || 5);
+const poolMax = 5;
 const corePath = `${fn}/_chunks/agent-native-core.mjs`;
 const core = readFileSync(corePath, "utf8");
 const pattern = /(\.runtime\.databasePoolMax;return [\w$]+\(\)\?)1(:[\w$]+\?\?20\})/;

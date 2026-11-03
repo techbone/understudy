@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import { getDb, schema } from "../server/db/index.js";
 import { nowIso, scopeOf } from "../server/lib/runbook.js";
+import { assertUnderCap, usedCents } from "../server/lib/usage-cap.js";
 
 export default defineAction({
   description:
@@ -26,6 +27,7 @@ export default defineAction({
   }),
   run: async ({ runbookId, trigger }, ctx) => {
     const scope = scopeOf(ctx);
+    const used = await usedCents(scope.email);
     const db = getDb();
     return db.transaction(async (tx) => {
       const [runbook] = await tx
@@ -61,7 +63,10 @@ export default defineAction({
               ownerEmail: scope.email,
               orgId: scope.orgId,
             };
-      if (!resumed) await tx.insert(schema.runs).values(run);
+      if (!resumed) {
+        assertUnderCap(used);
+        await tx.insert(schema.runs).values(run);
+      }
 
       const steps = await tx
         .select({

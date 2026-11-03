@@ -11,6 +11,9 @@ stdout | tests/monday-run.pglite.spec.ts > Monday invoice chase > moves the trus
   ✓ seeded runbook: 6 steps, levels auto/approve/auto/approve/auto/shadow, step 2 streak 2/3
 
 stdout | tests/monday-run.pglite.spec.ts > Monday invoice chase > moves the trust ladder up and down on evidence, and the gate holds
+[db] Installed schema snapshot (239 migration(s))
+
+stdout | tests/monday-run.pglite.spec.ts > Monday invoice chase > moves the trust ladder up and down on evidence, and the gate holds
   ✓ step 1 (Auto) ran unattended
 
 stdout | tests/monday-run.pglite.spec.ts > Monday invoice chase > moves the trust ladder up and down on evidence, and the gate holds
@@ -40,10 +43,10 @@ stdout | tests/monday-run.pglite.spec.ts > Monday invoice chase > moves the trus
 stdout | tests/monday-run.pglite.spec.ts > Monday invoice chase > moves the trust ladder up and down on evidence, and the gate holds
   ✓ final ladder: auto/auto/approve/approve/auto/shadow
 
- ✓ tests/monday-run.pglite.spec.ts > Monday invoice chase > moves the trust ladder up and down on evidence, and the gate holds 76ms
+ ✓ tests/monday-run.pglite.spec.ts > Monday invoice chase > moves the trust ladder up and down on evidence, and the gate holds 302ms
 
  Test Files  1 passed (1)
       Tests  1 passed (1)
-   Start at  10:15:47
-   Duration  1.99s (transform 64ms, setup 0ms, import 1.18s, tests 746ms, environment 0ms)
+   Start at  22:51:59
+   Duration  2.13s (transform 71ms, setup 0ms, import 1.07s, tests 982ms, environment 0ms)
 

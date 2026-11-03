@@ -41,7 +41,10 @@ export function parsePayload<E extends Effect>(
   const parsed = payloadByEffect[effect].safeParse(value);
   if (!parsed.success) {
     fail(
-      `Output does not match a ${effect} step: ${parsed.error.issues[0]?.message ?? "invalid"}`,
+      `Output does not match a ${effect} step: ${parsed.error.issues
+        .slice(0, 3)
+        .map((i) => `${i.path.join(".") || "output"}: ${i.message}`)
+        .join("; ")}. Fix the output and call submit-step again.`,
       {
         errorCode: "invalid_output",
         statusCode: 400,
