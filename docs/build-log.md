@@ -11,3 +11,9 @@ Surprises from the framework and our code: the dead end, the path we chose, and 
 ## 2026-11-02 — The agent must not be able to approve itself
 
 - **Path:** `decide-step` and `respond-promotion` set `toolCallable: false`, so they exist for the UI (and HTTP) but are never offered to the agent as tools.
+
+## 2026-11-03 — Run the agent on Meta's Muse Spark through an OpenAI-compatible endpoint
+
+- **Dead end:** setting `OPENAI_API_KEY` and `OPENAI_BASE_URL` in `.env`. The chat unlocked, but the model picker only offered OpenAI model names, so every chat would have sent an unknown model id to Meta. A copied `.env` also pointed the base URL at `api.openai.com`, which would have sent the Meta key to OpenAI.
+- **Path:** save the key and endpoint through Settings > Model > Add provider (OpenAI, with an endpoint URL). The form reads `GET /v1/models` from the endpoint and fills the model checklist (`muse-spark-1.3`, `muse-spark-1.1`). The framework treats `.env` values as a deployment fallback, not as a saved provider.
+- **Guard:** the real run in `docs/evidence/05-real-agent-run.png`. Muse Spark 1.3 started the run, ran the Auto step, and stopped at the Approve step as `waiting_on_person`. Both `muse-spark-1.1` and `-1.3` returned valid tool calls in a direct check against `api.meta.ai/v1/chat/completions`.
