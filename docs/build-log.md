@@ -55,3 +55,9 @@ Surprises from the framework and our code: the dead end, the path we chose, and 
 - **Cause:** a time-limit mismatch. The framework stops a hosted agent turn at 40 s and continues it in a fresh request, and its Vercel docs assume the function may run for 300 s, Vercel's default. While debugging signup we had turned Fluid Compute off and capped the function at 60 s, so a slow model call started near the 40 s mark was still running when Vercel killed the function.
 - **Path:** turn Fluid Compute back on (it was never the signup cause: the pool of 1 was) and set `maxDuration` to 300 in `scripts/vercel-function-config.mjs`.
 - **Guard:** a full run on a fresh live account with no Continue presses.
+
+## 2026-11-04 — Approving while the agent was still talking stalled the run
+
+- **Symptom:** on the live site, approving step 2 while the agent was still finishing its turn left "I've reviewed the waiting step. Carry on with the run." in the chat queue (a "Send now" bar). The turn ended still believing step 2 was waiting, the queued message never went, and the run sat at step 3.
+- **Path:** the run view no longer sends that message into a busy chat. It watches `useAgentChatGenerating()` and sends it once the agent has been quiet for 2 s, so the agent reads the run after the decision has landed.
+- **Guard:** a scripted local check approves step 2 0.1 s after it appears, mid-turn. The run reached step 4 on its own and no queue bar appeared.

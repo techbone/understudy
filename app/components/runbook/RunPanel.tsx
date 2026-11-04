@@ -1,4 +1,7 @@
-import { sendToAgentChat } from "@agent-native/core/client/agent-chat";
+import {
+  sendToAgentChat,
+  useAgentChatGenerating,
+} from "@agent-native/core/client/agent-chat";
 import {
   actionErrorMessage,
   useActionMutation,
@@ -10,7 +13,7 @@ import {
   IconLoader2,
   IconUser,
 } from "@tabler/icons-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -69,6 +72,21 @@ export function RunPanel({
     return (id: string) => map.get(id) ?? id.slice(0, 8);
   }, [invoices.data]);
 
+  // A decision can land while the agent is still mid-turn. A message sent
+  // then waits in the chat queue, and if the turn ends without sending it the
+  // run stalls. Hold it here and send once the agent has been quiet for a
+  // moment (a long turn pauses briefly between its chunks).
+  const [generating] = useAgentChatGenerating();
+  const [continueRunId, setContinueRunId] = useState<string | null>(null);
+  useEffect(() => {
+    if (!continueRunId || generating) return;
+    const timer = window.setTimeout(() => {
+      continueRun(runbookId, continueRunId);
+      setContinueRunId(null);
+    }, 2000);
+    return () => window.clearTimeout(timer);
+  }, [continueRunId, generating, runbookId]);
+
   if (!run) {
     return (
       <div className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
@@ -115,6 +133,7 @@ export function RunPanel({
               step={step}
               stepRun={stepRun}
               invoiceLabel={invoiceLabel}
+              onContinue={setContinueRunId}
             />
           ) : (
             <li
@@ -140,12 +159,14 @@ function StepRunCard({
   step,
   stepRun,
   invoiceLabel,
+  onContinue,
 }: {
   runbookId: string;
   runId: string;
   step: StepView;
   stepRun: StepRunView;
   invoiceLabel: (id: string) => string;
+  onContinue: (runId: string) => void;
 }) {
   const pending =
     stepRun.status === "proposed" || stepRun.status === "suggested";
@@ -165,7 +186,7 @@ function StepRunCard({
       } else if (result.events?.some((e) => e.kind === "promotion_offered")) {
         toast.success(`${step.title} asked to move up`);
       }
-      if (result.runStatus === "running") continueRun(runbookId, runId);
+      if (result.runStatus === "running") onContinue(runId);
     },
     onError: (error) =>
       toast.error(actionErrorMessage(error) ?? "Could not save your decision"),
