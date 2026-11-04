@@ -48,3 +48,10 @@ Surprises from the framework and our code: the dead end, the path we chose, and 
 - **Dead end:** the Meta provider added under Settings > Model is saved in the signed-in account's own workspace. A fresh signup gets an empty workspace and the chat says "Connect AI to start chatting". Only the account that configured it could run the agent.
 - **Path:** carry the model on the deployment. `OPENAI_API_KEY` and `OPENAI_BASE_URL` (Meta's endpoint) plus `AGENT_MODEL=muse-spark-1.3` as environment variables make every account chat-eligible on Muse Spark 1.3 with nothing saved. `AGENT_MAX_ITERATIONS=40` and `AGENT_MAX_RUN_INPUT_TOKENS=1000000` replace the framework's 400-iteration and 20M-token defaults so one bad run cannot spend much.
 - **Guard:** a second local instance on an empty database with only those variables: engine status `chatEligible: true`, model `muse-spark-1.3`, and a real tool-using chat. That run also showed the agent searching docs when a new account had not loaded the demo, so the system prompt now says to point the person at "Load the demo" instead.
+
+## 2026-11-04 — Long agent turns died on the live site
+
+- **Symptom:** on a fresh live account the run stopped three times with "The agent stopped before it could finish" (`stale_run`: the run's heartbeat stopped mid-turn), and the person had to press Continue or send a message each time. The local recording never hit it.
+- **Cause:** a time-limit mismatch. The framework stops a hosted agent turn at 40 s and continues it in a fresh request, and its Vercel docs assume the function may run for 300 s, Vercel's default. While debugging signup we had turned Fluid Compute off and capped the function at 60 s, so a slow model call started near the 40 s mark was still running when Vercel killed the function.
+- **Path:** turn Fluid Compute back on (it was never the signup cause: the pool of 1 was) and set `maxDuration` to 300 in `scripts/vercel-function-config.mjs`.
+- **Guard:** a full run on a fresh live account with no Continue presses.

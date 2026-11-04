@@ -1,6 +1,9 @@
 // Runs after `agent-native build` with the Vercel preset.
 // 1. Pins the server function next to the Supabase database (eu-west-1) and
-//    lifts the Hobby 10 s default so cold starts can finish setup queries.
+//    allows 300 s, the duration the framework assumes on Vercel. Agent turns
+//    are split into chunks and continued across requests, and a cap of 60 s
+//    killed long turns mid-run (stale_run). Needs Fluid Compute on (Hobby
+//    allows 300 s only with it).
 // 2. Raises the framework's serverless Postgres pool from 1 to 5. With one
 //    connection, startup queries wait on each other until the 8 s timeout,
 //    the pool is ended, and every later query fails with CONNECTION_ENDED.
@@ -13,7 +16,7 @@ const fn = ".vercel/output/functions/__server.func";
 const configPath = `${fn}/.vc-config.json`;
 const config = JSON.parse(readFileSync(configPath, "utf8"));
 config.regions = ["dub1"];
-config.maxDuration = 60;
+config.maxDuration = 300;
 writeFileSync(configPath, JSON.stringify(config, null, 2) + "\n");
 
 const poolMax = 5;
@@ -25,4 +28,4 @@ if (!pattern.test(core)) {
 }
 writeFileSync(corePath, core.replace(pattern, `$1${poolMax}$2`));
 
-console.log(`[vercel] regions=${config.regions} maxDuration=60 serverlessPoolMax=${poolMax}`);
+console.log(`[vercel] regions=${config.regions} maxDuration=${config.maxDuration} serverlessPoolMax=${poolMax}`);
