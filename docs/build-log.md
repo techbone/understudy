@@ -42,3 +42,9 @@ Surprises from the framework and our code: the dead end, the path we chose, and 
 - **Dead end:** looking for a spend limit in the framework. It records cost per user and can raise alerts, but nothing refuses a run, and the turn-start hook swallows errors, so it can't block either.
 - **Path:** `start-run` refuses to start a new run once an account's recorded model spend reaches $5 (about 30 runs at $0.17). A run already in progress can always finish. Free-form chat is not capped; the usage alert and the Meta credit balance are the backstop there.
 - **Guard:** `server/lib/usage-cap.spec.ts`.
+
+## 2026-11-04 — A judge's new account had no model
+
+- **Dead end:** the Meta provider added under Settings > Model is saved in the signed-in account's own workspace. A fresh signup gets an empty workspace and the chat says "Connect AI to start chatting". Only the account that configured it could run the agent.
+- **Path:** carry the model on the deployment. `OPENAI_API_KEY` and `OPENAI_BASE_URL` (Meta's endpoint) plus `AGENT_MODEL=muse-spark-1.3` as environment variables make every account chat-eligible on Muse Spark 1.3 with nothing saved. `AGENT_MAX_ITERATIONS=40` and `AGENT_MAX_RUN_INPUT_TOKENS=1000000` replace the framework's 400-iteration and 20M-token defaults so one bad run cannot spend much.
+- **Guard:** a second local instance on an empty database with only those variables: engine status `chatEligible: true`, model `muse-spark-1.3`, and a real tool-using chat. That run also showed the agent searching docs when a new account had not loaded the demo, so the system prompt now says to point the person at "Load the demo" instead.
