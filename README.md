@@ -16,9 +16,15 @@ The agent is a real model (Meta Muse Spark 1.3) calling real actions. The only m
 
 **[Watch the demo](https://clips.agent-native.com/share/F0P4iKgswOlJ)** · **[Live app](https://understudy-drab.vercel.app)** · [Verify it yourself](#verify-it-yourself-in-60-seconds) · [Architecture](ARCHITECTURE.md) · [Run it locally](#run-it-locally)
 
+## Contents
+
+[Demo](#demo) · [Verify it yourself](#verify-it-yourself-in-60-seconds) · [The problem](#the-problem) · [What it does](#what-it-does) · [Architecture](#architecture) · [The hard problem](#the-hard-problem-signup-that-failed-only-on-the-live-site) · [Real vs simplified](#whats-real-and-whats-simplified) · [Engineering decisions](#engineering-decisions) · [Project layout](#project-layout) · [Run it locally](#run-it-locally) · [Limitations](#known-limitations-and-disclosure)
+
 ## Demo
 
-[Public Clip, 2:17](https://clips.agent-native.com/share/F0P4iKgswOlJ): the Monday invoice chase run twice. First run: step 1 runs on its own, step 2 waits, three clean approvals earn a promotion offer, the send step is capped at Approve, and an edit resets its streak. Second run: the promoted step runs unattended.
+[![Demo video: the promotion offer after three clean approvals](docs/evidence/demo-thumb.png)](https://clips.agent-native.com/share/F0P4iKgswOlJ)
+
+[Public Clip, 2:17](https://clips.agent-native.com/share/F0P4iKgswOlJ) (click the image above): the Monday invoice chase run twice. First run: step 1 runs on its own, step 2 waits, three clean approvals earn a promotion offer, the send step is capped at Approve, and an edit resets its streak. Second run: the promoted step runs unattended.
 
 Disclosure about the recording:
 
@@ -152,8 +158,8 @@ The fix is a post-build script (`scripts/vercel-function-config.mjs`) that raise
 | Sending reminders | Writes to the demo **outbox**. Nothing is emailed. | Simplified on purpose |
 | The runbook | **Seeded** by "Load the demo". It is not built from a Clip. | Simplified |
 | Importing a Clip into a runbook | Not built | Not built |
-| Scheduled Monday run | Not built. Runs start from **Run now** or from chat. | Not built |
-| Running the chore from Claude or Cursor over MCP | The gate is a framework predicate, so it would apply, but I haven't demonstrated it | Not built |
+| Scheduled Monday run | Not built. Runs start from **Run now** or from chat. The "Mondays 09:00" label on the ladder is the runbook's intended schedule, and nothing triggers it yet. | Not built |
+| Running the chore from Claude or Cursor over MCP | The framework serves every action at `https://understudy-drab.vercel.app/mcp` (OAuth sign-in), and the gate is a framework predicate, so it should apply there too. I haven't demonstrated it with a real MCP client. | Exposed, not demonstrated |
 | Per-account cost limit | New runs are refused once an account's recorded model spend reaches $5 (about 30 runs). Chat outside runs isn't capped. | Real, partial |
 
 ## Engineering decisions
@@ -174,8 +180,12 @@ server/lib/   trust.ts (rules), runbook.ts (payload checks), usage-cap.ts, demo.
 server/plugins/agent-chat.ts   the agent's system prompt and tool wiring
 scripts/      vercel-function-config.mjs (post-build patch), db-check, db-activity
 tests/        monday-run.pglite.spec.ts, the end-to-end run
-docs/         build-log, demo script, evidence screenshots and e2e output
+docs/         build-log, demo script, submission text, evidence screenshots and e2e output
+public/       icons and web manifest
+data/         local PGlite database (gitignored)
 ```
+
+Some files at the root come from the framework's starter template and aren't specific to Understudy: `DESIGN.md`, `DEVELOPING.md`, `CHANGELOG.md` and `changelog/`, `learnings.md`, and `netlify.toml` (unused; the app deploys to Vercel). The project's own docs are this README, [ARCHITECTURE.md](ARCHITECTURE.md), [AGENTS.md](AGENTS.md) and [docs/](docs/).
 
 ## Run it locally
 
