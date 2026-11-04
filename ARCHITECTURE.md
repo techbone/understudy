@@ -122,9 +122,9 @@ sequenceDiagram
 
 ## Milestones
 
-| | Done when |
-|---|---|
-| **M1 — Trust ladder end to end** | Seeded runbook with history; agent runs it; approve, edit, reject and correct all move the ladder; promotion offer works; gate blocks `perform-step` above level. Deployed. |
-| **M2 — From a Clip** | The agent reads a Clips share transcript and drafts the runbook steps; the human edits them before saving. |
-| **M3 — Runs without you** | Monday recurring job; MCP exposure with the gate demo from Claude; "Reset & launch demo". |
-| **M4 — Ship** | UI polish pass, `pnpm e2e` evidence, README, demo script, submission text. |
+| | Done when | Status |
+|---|---|---|
+| **M1 — Trust ladder end to end** | Seeded runbook with history; agent runs it; approve, edit, reject and correct all move the ladder; promotion offer works; gate blocks `perform-step` above level. Deployed. | Done, live on Vercel |
+| **M2 — From a Clip** | The agent reads a Clips share transcript and drafts the runbook steps; the human edits them before saving. | Not built |
+| **M3 — Runs without you** | Monday recurring job; MCP exposure with the gate demo from Claude; "Reset & launch demo". | Partly: "Load the demo" and "Reset demo data" are built; MCP is exposed by the framework at `/mcp` but not demonstrated; the recurring job is not built |
+| **M4 — Ship** | UI polish pass, `pnpm e2e` evidence, README, demo script, submission text. | Done: 10 unit tests and 1 e2e passing, demo Clip published |

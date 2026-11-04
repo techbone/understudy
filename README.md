@@ -6,7 +6,9 @@
 ![model](https://img.shields.io/badge/agent-Muse%20Spark%201.3-111)
 ![live](https://img.shields.io/badge/live-understudy--drab.vercel.app-111)
 
-![Understudy runbook with the trust ladder](docs/evidence/01-runbook.png)
+[![Watch the 2:17 demo: the promotion offer after three clean approvals](docs/evidence/demo-thumb.png)](https://clips.agent-native.com/share/F0P4iKgswOlJ)
+
+*Click to watch the 2:17 demo.*
 
 ### You don't hand the agent the keys. It earns them, one step at a time.
 
@@ -22,15 +24,15 @@ The agent is a real model (Meta Muse Spark 1.3) calling real actions. The only m
 
 ## Demo
 
-[![Demo video: the promotion offer after three clean approvals](docs/evidence/demo-thumb.png)](https://clips.agent-native.com/share/F0P4iKgswOlJ)
-
-[Public Clip, 2:17](https://clips.agent-native.com/share/F0P4iKgswOlJ) (click the image above): the Monday invoice chase run twice. First run: step 1 runs on its own, step 2 waits, three clean approvals earn a promotion offer, the send step is capped at Approve, and an edit resets its streak. Second run: the promoted step runs unattended.
+[Public Clip, 2:17](https://clips.agent-native.com/share/F0P4iKgswOlJ), with the full shot list in [docs/demo-script.md](docs/demo-script.md): the Monday invoice chase run twice. First run: step 1 runs on its own, step 2 waits, three clean approvals earn a promotion offer, the send step is capped at Approve, and an edit resets its streak. Second run: the promoted step runs unattended.
 
 Disclosure about the recording:
 
 - It was recorded on a **local build of this same code** with the real Muse Spark model, on a fresh database, because the live database stalled once while I was recording.
 - Nothing is sped up. The agent takes 25 to 70 seconds per turn, so those waits are **cut**, and every cut is labelled on screen ("Cut: the agent worked for Ns").
 - The narration is a single voice take placed over the footage.
+
+![The trust ladder after a run](docs/evidence/01-runbook.png)
 
 ## Verify it yourself in 60 seconds
 

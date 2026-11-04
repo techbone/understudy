@@ -1,33 +1,43 @@
-# Demo script (target 2:30)
+# Demo script (as recorded, 2:17)
 
-Shot list: time, screen, narration, and what must be true before recording.
-Timings come from real runs of Muse Spark 1.3 on the live site (an agent turn takes 25-55 s, about $0.17-0.19). Nothing is sped up. Where a turn is long, the video cuts to the result and says "cut" on screen.
+Published: https://clips.agent-native.com/share/F0P4iKgswOlJ
+
+Recorded with a scripted browser (Playwright, 1440x900, dark theme) on a local build of this code with the real Muse Spark 1.3 model, on a fresh database. The first take on the live site hit a database stall, so the final take is local. An agent turn takes 25 to 70 seconds and costs about $0.17 to $0.19. Nothing is sped up: long agent turns are cut, and each cut is labelled on screen ("Cut: the agent worked for Ns").
 
 ## Before every take
 
-1. Sign in, open the runbook, menu (...) then **Reset demo data**. This puts every step back where the seed history left it: Pull, Draft and Log on Auto, Exceptions on Approve at 2/3, Send on Approve (capped), Escalate on Shadow at 1/3.
-2. Outbox is empty after reset. Chat history is clear.
-3. Model is Muse Spark 1.3. The account is under its spend cap (Settings > usage).
-4. One action at a time: never click Run now or Approve while the agent is still working, or the turn is cut off.
+1. Fresh account (or **Reset demo data** from the runbook's ... menu), then **Load the demo**. Seed state: Pull, Draft and Log on Auto, Exceptions on Approve at 2/3, Send on Approve (capped), Escalate on Shadow at 1/3.
+2. Outbox empty, chat clear, model on Muse Spark 1.3, account under its $5 spend cap.
+3. One action at a time: never click Run now or Approve while the agent is working.
 
 ## Shots
 
-| Time | Screen | Narration | Precondition / what to verify |
+| Time | Screen | Narration | What must be true |
 |---|---|---|---|
-| 0:00 | Runbook page, ladder visible | "Every Monday I chase overdue invoices. I showed Understudy once. Now each step sits where it has earned." | Reset done; ladder shows the six rungs and the lock on Send |
-| 0:15 | Click **Run now**; chat streams, step 1 fills in | "Pulling invoices is Auto, so it just happens. The next step it hasn't earned, so it stops and waits for me." | Real run, about 35 s; step 2 shows "Needs your OK" |
-| 0:45 | Approve step 2 | "That's three clean approvals in a row, so it asks to move up. It never promotes itself." | Promotion banner appears on step 2 |
-| 1:00 | Click **Promote** | "I accept. Exceptions is now Auto." | Step 2 shows Auto |
-| 1:10 | Click **Run now** again | "Next Monday: it checks exceptions on its own, drafts the reminders on its own, and stops at the first step that messages a client." | About 35 s; step 4 shows "Needs your OK" (cut to result) |
-| 1:35 | Edit one reminder's wording, then **Approve** | "I soften Fable's tone. An edit resets that step's streak. Send can never go above Approve, because it messages clients." | Streak on step 4 resets; lock icon visible |
-| 1:55 | Outbox | "Nothing really leaves the app. This outbox stands in for the billing inbox." | Reminders and the founder escalation are listed |
-| 2:05 | Chat: "just send them all now" | "Even if I ask the agent to skip approval, the framework's gate stops it. That gate is in the action, not in a prompt." | VERIFY on the live site before recording; see the e2e check "gate holds" |
-| 2:20 | Click a step, evidence drawer | "Every level links to the approvals that earned it." | `?step=<id>` opens evidence |
-| 2:30 | Clip, then runbook | "And it all started from one recording." | Pending: Clip import (M2) needs the public Clip link |
+| 0:00 | Runbook, cursor walks the ladder | "Every Monday I chase overdue invoices. In Understudy that chore is a runbook: six steps, each at a level it has earned." | Six rungs, lock on Send |
+| 0:13 | Ladder | "Shadow: it suggests and I do it. Approve: it does it and I sign off. Auto: it just runs and logs it." | |
+| 0:22 | Click **Run now** | "Let's run this week." | Chat opens and streams |
+| 0:28 | Run view (after a 19 s cut) | "Pulling invoices is on Auto, so it just happened. Checking exceptions isn't, so it stopped and waits for me." | Step 1 "Ran on its own", step 2 "Needs your OK" |
+| 0:37 | Approve step 2 | "Its call looks right, so I approve. That's three clean approvals in a row, so it asks me to move up. It never promotes itself. I decide." | Promotion offer on step 2 |
+| 0:50 | Click **Promote** | "Promote." | Step 2 shows Auto |
+| 0:58 | Step 4 (after a 15 s cut) | "It drafted the reminders on its own. Sending is different. It emails clients, so it's capped at Approve." | Step 4 "Needs your OK", lock visible |
+| 1:07 | Edit Fable's reminder, add a P.S. | "I'll soften Fable's note. An edit resets the streak, so trust is only earned on work I didn't have to fix." | Text appended at the end |
+| 1:17 | **Approve** | "Approve." | "Approved with edits" |
+| 1:24 | Step 6 (after a 41 s cut) | "Escalating to the founder is still Shadow. It drafts it, I do it." | Step 6 "Your step", then Done |
+| 1:35 | Outbox | "Nothing really leaves the app. This outbox stands in for the billing inbox." | Three reminders and the escalation |
+| 1:44 | Back to the runbook, **Run now** | "Next Monday." | |
+| 1:54 | Run view (after a cut) | "This time exceptions ran on its own. It earned that. The step that emails clients still waits for me." | Step 2 "Ran on its own", step 4 waiting |
+| 2:04 | Evidence drawer for step 2 | "And every level links to the evidence that earned it, approval by approval." | Ledger lists the promotion and approvals |
+| 2:10 | End card with the live URL | "Understudy. Show it once. Let it earn the rest." | |
 
-## Recording
+## Not in this video
 
-- Browser capture of the live site, 1440x900, no browser chrome clutter, light cursor highlight.
-- Captions are burned in from `docs/demo-captions.txt`, one line per shot, describing what is on screen.
-- Voice is added afterwards from the narration column.
-- If the model does not work for a fresh account on the live site, record on a local build of the same code with the real Muse Spark model, and say so on screen.
+- **The gate under pressure** ("just send them all now" in chat, or a call over MCP). It's covered by the e2e check "gate: perform-step on an Approve step needs a human", and hasn't been recorded.
+- **Building the runbook from a Clip.** It isn't built. The demo runbook is seeded.
+
+## How it was made
+
+- `record.mjs` drives the browser, injects a visible cursor and the short on-screen labels, and writes a timestamp for each moment.
+- `edit.mjs` cuts the agent's waits using those timestamps, and labels every cut.
+- The voice is one take, split per line and placed at each line's moment, with the level normalised.
+- The Clip's transcript is uploaded from the same text, with misheard product words corrected (runbook, auto, earned).

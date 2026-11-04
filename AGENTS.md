@@ -49,3 +49,15 @@ Recorded chores (runbooks) the agent runs with the person. Each step has an earn
 | perform-step | Run a pending proposal now (gated) |
 | explain-step | Why a step is at its level, with evidence |
 | list-invoices / list-client-notes / list-outbox | Demo ledger, exceptions, sent mail |
+
+### Design rules
+
+The goal is a calm, dense work tool (Linear, Stripe), not a chat toy. Before calling a screen done, ask whether anyone would guess an AI made it.
+
+- **Palette:** neutral greys (`--background`, `--foreground`, `--muted`) plus one accent, `--earned` (green, `161 72% 27%` light, `158 58% 50%` dark), used only for earned trust: the Auto rung, "Ran on its own", streak dots, the promotion offer. `--caution` (amber) is only for the capped lock and warnings. No gradients, glows or glass.
+- **Type:** the app sans for text; `font-mono` (JetBrains Mono) for invoice ids, emails, levels and timestamps; `.tnum` for every number and money amount. The level labels are uppercase mono with `tracking-wide`.
+- **Shape:** `rounded-xl` for cards, `rounded-lg` for inner rows, `rounded-md` for controls, `rounded-full` only for dots and pills. One soft shadow (`shadow-sm`) at most; prefer a 1px border.
+- **Icons:** Tabler (`@tabler/icons-react`) only, small and quiet. No emoji, no sparkle icons.
+- **Copy:** plain and specific to the chore ("Needs your OK", "Messages clients: capped"). Never "AI-powered", "seamless" or "unlock".
+- **States:** every list has an empty state that says what to do next ("Load the demo"); agent work shows named states (working, waiting, ran on its own), not one spinner.
+- **Dark mode** is designed, not inverted: `--earned` brightens and `--earned-soft` darkens so the accent keeps its contrast.
