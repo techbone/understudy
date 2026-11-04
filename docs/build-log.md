@@ -10,7 +10,7 @@ Surprises from the framework and our code: the dead end, the path we chose, and 
 
 ## 2026-11-02 — The agent must not be able to approve itself
 
-- **Path:** `decide-step` and `respond-promotion` set `toolCallable: false`, so they exist for the UI (and HTTP) but are never offered to the agent as tools.
+- **Path:** `decide-step` and `respond-promotion` set `uiOnly: true`, so they exist for the UI (and HTTP) but are never offered to the agent as tools.
 
 ## 2026-11-03 — Run the agent on Meta's Muse Spark through an OpenAI-compatible endpoint
 

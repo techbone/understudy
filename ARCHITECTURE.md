@@ -24,7 +24,7 @@ What makes it different: recording-to-agent tools (SkillForge, Zight Agent) hand
 |---|---|---|
 | Agent runs the runbook, step by step | `defineAction` tools + agent chat loop | `actions/submit-step.ts`, `server/plugins/agent-chat.ts` |
 | Auto steps run unattended, gated steps can't | `needsApproval: (args) => level(step) !== "auto"`, checked on all surfaces | `actions/perform-step.ts` |
-| Human approves / edits / rejects a proposal | UI-only action (`toolCallable: false`), so the agent can't approve itself | `actions/decide-step.ts` |
+| Human approves / edits / rejects a proposal | UI-only action (`uiOnly: true`), so the agent can't approve itself | `actions/decide-step.ts` |
 | Promotion offer → accept / decline | Same pattern: agent proposes in chat, human decides in the UI | `actions/respond-promotion.ts` |
 | Run timeline fills in live as the agent works | Live sync (chat-run query invalidation; `useDbSync` for scheduled runs) | `app/routes/runbooks.$id.tsx` |
 | "Why is this step on Approve?" while looking at it | Context awareness (`navigation` + `view-screen`) | `app/hooks/use-navigation-state.ts` |
@@ -44,7 +44,7 @@ flowchart LR
     A[Actions<br/>list-* · submit-step · perform-step<br/>decide-step · respond-promotion]
     G{{needsApproval<br/>predicate}}
     L[Trust engine<br/>server/lib/trust.ts]
-    DB[(Postgres<br/>PGlite local · Neon prod)]
+    DB[(Postgres<br/>PGlite local · Supabase prod)]
   end
   MCP[Claude / Cursor<br/>via MCP]
   Job[Monday 09:00<br/>recurring job]
@@ -109,9 +109,9 @@ sequenceDiagram
 ## Stack
 
 - **Agent-Native 0.222.2** (React Router 8 + Vite + Nitro, Drizzle on Postgres). The framework sets this stack, which is why we deviate from the playbook's Next.js default.
-- **DB:** PGlite locally (free, embedded); Neon free-tier Postgres for the deployed app. No paid DB.
-- **Host:** Netlify (the template ships `netlify.toml`); Cloudflare Workers as a fallback.
-- **LLM:** Anthropic key (or Builder.io connection) set in env or app settings.
+- **DB:** PGlite locally (free, embedded); Supabase Postgres (free tier, transaction pooler) for the deployed app. No paid DB.
+- **Host:** Vercel Hobby, deployed from the CLI with `pnpm build:vercel`. The template's `netlify.toml` is unused.
+- **LLM:** Meta Muse Spark 1.3 through an OpenAI-compatible endpoint, set as deployment env vars so every account can chat.
 
 ## Out of scope
 
