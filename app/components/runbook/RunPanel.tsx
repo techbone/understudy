@@ -13,7 +13,7 @@ import {
   IconLoader2,
   IconUser,
 } from "@tabler/icons-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -47,9 +47,13 @@ function sameJson(a: unknown, b: unknown) {
   return JSON.stringify(a) === JSON.stringify(b);
 }
 
-function continueRun(runbookId: string, runId: string) {
+function continueRun(
+  runbookId: string,
+  runId: string,
+  message = "I've reviewed the waiting step. Carry on with the run.",
+) {
   sendToAgentChat({
-    message: "I've reviewed the waiting step. Carry on with the run.",
+    message,
     context: `runbookId: ${runbookId}, runId: ${runId}`,
     submit: true,
   });
@@ -76,7 +80,7 @@ export function RunPanel({
   // then waits in the chat queue, and if the turn ends without sending it the
   // run stalls. Hold it here and send once the agent has been quiet for a
   // moment (a long turn pauses briefly between its chunks).
-  const [generating] = useAgentChatGenerating();
+  const [generating, , stopReason] = useAgentChatGenerating();
   const [continueRunId, setContinueRunId] = useState<string | null>(null);
   useEffect(() => {
     if (!continueRunId || generating) return;
@@ -86,6 +90,25 @@ export function RunPanel({
     }, 2000);
     return () => window.clearTimeout(timer);
   }, [continueRunId, generating, runbookId]);
+
+  // On hosted deploys a long turn is cut into chunks and the framework
+  // continues it on its own only a few times; past that, or after a server
+  // error, the chat stops while the run is still on the agent's turn. Pick it
+  // back up (a few times per run) unless the person pressed Stop.
+  const nudges = useRef({ runId: "", count: 0 });
+  const runId = run?.id;
+  const agentsTurn = run?.status === "running";
+  useEffect(() => {
+    if (!runId || !agentsTurn || generating || continueRunId) return;
+    if (stopReason === "stopped") return;
+    if (nudges.current.runId !== runId) nudges.current = { runId, count: 0 };
+    if (nudges.current.count >= 3) return;
+    const timer = window.setTimeout(() => {
+      nudges.current.count += 1;
+      continueRun(runbookId, runId, "Carry on with the run.");
+    }, 8000);
+    return () => window.clearTimeout(timer);
+  }, [runId, agentsTurn, generating, continueRunId, stopReason, runbookId]);
 
   if (!run) {
     return (

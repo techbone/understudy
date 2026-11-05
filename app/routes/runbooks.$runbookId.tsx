@@ -112,7 +112,9 @@ export default function RunbookRoute() {
     );
   }
   if (notFound) return null;
-  if (error || !data) {
+  // A failed refetch keeps the last good data on screen; only a first load
+  // with nothing to show gets the retry state.
+  if (!data) {
     return (
       <div className="flex items-center gap-3 p-6 text-sm text-muted-foreground">
         Could not load this runbook.

@@ -69,3 +69,10 @@ Surprises from the framework and our code: the dead end, the path we chose, and 
 - **Cause (not found):** sign-in returned the new account to the URL the old account was on, a runbook it doesn't own, and the page had a dead end for a 404.
 - **Path:** Fluid off and `maxDuration` back to 60 s, with `agent.runSoftTimeoutMs` at 25 s so a turn hands off with 35 s to spare (the earlier `stale_run` came from a 40 s hand-off inside a 60 s cap). A 404 on a runbook now redirects to `/runbooks`; any other load error shows "Try again".
 - **Guard:** a scripted local check opens another account's runbook URL and lands on the account's own runbooks. Live guard: a full fresh-account run with no Continue presses.
+
+## 2026-11-05 — Long turns hit the framework's continuation cap
+
+- **Symptom:** on the live site, after the 25 s hand-off, a run stopped with "The run reached its time limit before completion was confirmed" and needed Continue. During a database stall the run view also vanished.
+- **Cause:** the framework continues a time-limited turn on its own only 3 times (`MAX_AUTO_CONTINUES_PER_TURN`), so shorter chunks end a long turn sooner. The run view treated any failed refetch as fatal, even with good data already on screen.
+- **Path:** hand-off at 30 s. RunPanel now picks a stopped run back up: when the run is on the agent's turn (`running`) and the chat has been idle for 8 s, and the person didn't press Stop, it sends "Carry on with the run.", at most 3 times per run. A failed refetch keeps the last good runbook on screen.
+- **Guard:** a scripted local run with the hand-off forced to 12 s (6 time-limit stops) completed on its own: 1 auto-resume, no Continue, no queued message.

@@ -12,8 +12,10 @@ export default defineAppConfig({
     // logoUrl: "https://example.com/logo.png",
   },
   agent: {
-    // Hand a hosted turn off to a fresh request at 25 s, well inside the 60 s
+    // Hand a hosted turn off to a fresh request at 30 s, inside the 60 s
     // function cap on Vercel Hobby (see scripts/vercel-function-config.mjs).
-    runSoftTimeoutMs: 25_000,
+    // The framework continues a turn only 3 times, so shorter chunks end a
+    // long turn sooner; RunPanel picks the run back up when that happens.
+    runSoftTimeoutMs: 30_000,
   },
 });

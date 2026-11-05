@@ -3,7 +3,7 @@
 //    caps it at 60 s, the Hobby limit without Fluid Compute. Keep Fluid off:
 //    with it one instance served dozens of requests through this small pool
 //    and queries timed out ("database temporarily unavailable"). Agent turns
-//    hand off at 25 s (agent.runSoftTimeoutMs in the app config) so a slow
+//    hand off at 30 s (agent.runSoftTimeoutMs in the app config) so a slow
 //    model call still finishes inside the 60 s cap.
 // 2. Raises the framework's serverless Postgres pool from 1 to 5. With one
 //    connection, startup queries wait on each other until the 8 s timeout,
