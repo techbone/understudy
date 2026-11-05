@@ -11,4 +11,9 @@ export default defineAppConfig({
     // Optional: use your own absolute HTTPS logo URL in transactional emails.
     // logoUrl: "https://example.com/logo.png",
   },
+  agent: {
+    // Hand a hosted turn off to a fresh request at 25 s, well inside the 60 s
+    // function cap on Vercel Hobby (see scripts/vercel-function-config.mjs).
+    runSoftTimeoutMs: 25_000,
+  },
 });

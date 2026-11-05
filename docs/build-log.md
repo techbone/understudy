@@ -61,3 +61,11 @@ Surprises from the framework and our code: the dead end, the path we chose, and 
 - **Symptom:** on the live site, approving step 2 while the agent was still finishing its turn left "I've reviewed the waiting step. Carry on with the run." in the chat queue (a "Send now" bar). The turn ended still believing step 2 was waiting, the queued message never went, and the run sat at step 3.
 - **Path:** the run view no longer sends that message into a busy chat. It watches `useAgentChatGenerating()` and sends it once the agent has been quiet for 2 s, so the agent reads the run after the decision has landed.
 - **Guard:** a scripted local check approves step 2 0.1 s after it appears, mid-turn. The run reached step 4 on its own and no queue bar appeared.
+
+## 2026-11-05 — Fluid Compute starved the database; a stale link showed "Runbook not found"
+
+- **Symptom:** after the 300 s / Fluid deploy, a fresh live run showed "The database is temporarily unavailable" in chat. Separately, signing up straight after logging out landed on "Runbook not found".
+- **Cause (database):** Vercel logs showed queries timing out at 8 s (`CONNECT_TIMEOUT`) while one Fluid instance was serving 33 requests through a pool of 5. Before Fluid each request had its own instance and the database was steady.
+- **Cause (not found):** sign-in returned the new account to the URL the old account was on, a runbook it doesn't own, and the page had a dead end for a 404.
+- **Path:** Fluid off and `maxDuration` back to 60 s, with `agent.runSoftTimeoutMs` at 25 s so a turn hands off with 35 s to spare (the earlier `stale_run` came from a 40 s hand-off inside a 60 s cap). A 404 on a runbook now redirects to `/runbooks`; any other load error shows "Try again".
+- **Guard:** a scripted local check opens another account's runbook URL and lands on the account's own runbooks. Live guard: a full fresh-account run with no Continue presses.

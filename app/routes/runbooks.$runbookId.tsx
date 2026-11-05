@@ -9,7 +9,7 @@ import {
   useSetPageTitle,
 } from "@agent-native/toolkit/app-shell/header-actions";
 import { IconDots, IconPlayerPlay } from "@tabler/icons-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams, useSearchParams } from "react-router";
 import { toast } from "sonner";
 
@@ -34,9 +34,15 @@ export default function RunbookRoute() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const selectedStepId = searchParams.get("step");
-  const { data, isPending, error } = useActionQuery("get-runbook", {
+  const { data, isPending, error, refetch } = useActionQuery("get-runbook", {
     runbookId,
   });
+  // A link from another account (or a deleted runbook) is not this person's:
+  // send them to their own runbooks, where "Load the demo" is one click away.
+  const notFound = (error as { status?: number } | null)?.status === 404;
+  useEffect(() => {
+    if (notFound) navigate("/runbooks", { replace: true });
+  }, [notFound, navigate]);
   const [starting, setStarting] = useState(false);
 
   const reset = useActionMutation("reset-demo", {
@@ -105,13 +111,14 @@ export default function RunbookRoute() {
       </div>
     );
   }
+  if (notFound) return null;
   if (error || !data) {
     return (
-      <div className="p-6 text-sm text-muted-foreground">
-        Runbook not found.{" "}
-        <Link className="underline" to="/runbooks">
-          Back to runbooks
-        </Link>
+      <div className="flex items-center gap-3 p-6 text-sm text-muted-foreground">
+        Could not load this runbook.
+        <Button size="sm" variant="outline" onClick={() => void refetch()}>
+          Try again
+        </Button>
       </div>
     );
   }
