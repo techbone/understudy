@@ -37,7 +37,7 @@ Recorded with a scripted browser (Playwright, 1440x900, dark theme) on a local b
 
 ## How it was made
 
-- `record.mjs` drives the browser, injects a visible cursor and the short on-screen labels, and writes a timestamp for each moment.
-- `edit.mjs` cuts the agent's waits using those timestamps, and labels every cut.
+- A Playwright script (kept outside the repo) drives the browser, injects a visible cursor and the short on-screen labels, and writes a timestamp for each moment.
+- An ffmpeg pass cuts the agent's waits using those timestamps, and labels every cut.
 - The voice is one take, split per line and placed at each line's moment, with the level normalised.
 - The Clip's transcript is uploaded from the same text, with misheard product words corrected (runbook, auto, earned).

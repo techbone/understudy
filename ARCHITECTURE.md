@@ -110,7 +110,7 @@ sequenceDiagram
 
 - **Agent-Native 0.222.2** (React Router 8 + Vite + Nitro, Drizzle on Postgres). The framework sets this stack, which is why we deviate from the playbook's Next.js default.
 - **DB:** PGlite locally (free, embedded); Supabase Postgres (free tier, transaction pooler) for the deployed app. No paid DB.
-- **Host:** Vercel Hobby, deployed from the CLI with `pnpm build:vercel`. The template's `netlify.toml` is unused.
+- **Host:** Vercel Hobby, deployed from the CLI with `pnpm build:vercel`.
 - **LLM:** Meta Muse Spark 1.3 through an OpenAI-compatible endpoint, set as deployment env vars so every account can chat.
 
 ## Out of scope
@@ -127,4 +127,4 @@ sequenceDiagram
 | **M1 — Trust ladder end to end** | Seeded runbook with history; agent runs it; approve, edit, reject and correct all move the ladder; promotion offer works; gate blocks `perform-step` above level. Deployed. | Done, live on Vercel |
 | **M2 — From a Clip** | The agent reads a Clips share transcript and drafts the runbook steps; the human edits them before saving. | Not built |
 | **M3 — Runs without you** | Monday recurring job; MCP exposure with the gate demo from Claude; "Reset & launch demo". | Partly: "Load the demo" and "Reset demo data" are built; MCP is exposed by the framework at `/mcp` but not demonstrated; the recurring job is not built |
-| **M4 — Ship** | UI polish pass, `pnpm e2e` evidence, README, demo script, submission text. | Done: 10 unit tests and 1 e2e passing, demo Clip published |
+| **M4 — Ship** | UI polish pass, `pnpm e2e` evidence, README, demo script. | Done: 10 unit tests and 1 e2e passing, demo Clip published |

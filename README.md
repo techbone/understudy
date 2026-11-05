@@ -180,14 +180,14 @@ actions/      one file per action: the agent's tools and the UI's mutations
 app/routes/   runbook list, runbook and run view, outbox, settings
 server/lib/   trust.ts (rules), runbook.ts (payload checks), usage-cap.ts, demo.ts (seed)
 server/plugins/agent-chat.ts   the agent's system prompt and tool wiring
-scripts/      vercel-function-config.mjs (post-build patch), db-check, db-activity
+scripts/      vercel-function-config.mjs (post-build patch), migrate-production.ts
 tests/        monday-run.pglite.spec.ts, the end-to-end run
-docs/         build-log, demo script, submission text, evidence screenshots and e2e output
+docs/         build-log, demo script, evidence screenshots and e2e output
 public/       icons and web manifest
 data/         local PGlite database (gitignored)
 ```
 
-Some files at the root come from the framework's starter template and aren't specific to Understudy: `DESIGN.md`, `DEVELOPING.md`, `CHANGELOG.md` and `changelog/`, `learnings.md`, and `netlify.toml` (unused; the app deploys to Vercel). The project's own docs are this README, [ARCHITECTURE.md](ARCHITECTURE.md), [AGENTS.md](AGENTS.md) and [docs/](docs/).
+Some files at the root come from the framework's starter template and aren't specific to Understudy: `DESIGN.md`, `DEVELOPING.md`, `CHANGELOG.md` and `changelog/`, and `learnings.defaults.md`. The project's own docs are this README, [ARCHITECTURE.md](ARCHITECTURE.md), [AGENTS.md](AGENTS.md) and [docs/](docs/).
 
 ## Run it locally
 

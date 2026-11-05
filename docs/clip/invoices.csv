@@ -1,8 +1,0 @@
-Invoice,Client,Contact,Email,Amount,Due,Days overdue,Reminders sent,Status,Last action
-INV-1029,Dunmore & Sons,Hal Dunmore,hal@dunmore.test,"$7,400.00",2026-09-13,52,3,Open,
-INV-1038,Brightline Health,Omar Reyes,omar@brightline.test,"$2,150.00",2026-10-01,34,2,Open,
-INV-1040,Fable & Co,Jo Mercer,jo@fableco.test,"$3,300.00",2026-10-14,21,1,Open,
-INV-1041,Acme Logistics,Dana Whitfield,dana@acme-logistics.test,"$4,800.00",2026-10-23,12,1,Open,
-INV-1044,Corvid Studio,Priya Nair,priya@corvid.test,$950.00,2026-10-27,8,0,Open,
-INV-1046,Elmwood Dental,Sam Ortiz,sam@elmwood.test,"$1,200.00",2026-11-01,3,0,Open,
-INV-1035,Gristmill Coffee,Lena Brooks,lena@gristmill.test,$640.00,2026-10-20,,,Paid,
